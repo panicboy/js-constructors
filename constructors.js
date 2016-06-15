@@ -15,8 +15,10 @@
   this.name = name;
   this.cost = cost;
   this.description = description;
+  cl('Spell name: ' + this.name + '; cost: ' + this.cost + '; description: ' + this.description);
   this.printDetails = function(){
     return 'name: ' + this.name + '; cost: ' + this.cost + '; description: ' + this.description;
+
   };
   }
 
@@ -59,6 +61,7 @@
 
   function DamageSpell(name, cost, damage, description){
     this.damage = damage;
+    cl('Spell name: ' + this.name + '; cost: ' + this.cost + '; description: ' + this.description + '; Damage: ' + this.damage);
     Spell.call(this, name, cost, description);
   }
 
@@ -89,26 +92,81 @@
   this.health = health;
   this.mana = mana;
   this.isAlive = true;
+  cl('Spellcaster: ' + this.name + '; health: ' + this.health + '; mana: ' + this.mana + '; isAlive: ' + this.isAlive);
   this.inflictDamage = function(damage) {
-    health -= damage;
-    if(health < 0){
-      health = 0;
-      isAlive = false;
+    cl('inflictDamage called on ' + this.name + '. Damage: ' + damage);
+    this.health -= damage;
+    cl(this.name + ' has been injured!');
+    cl(this.name + '\'s remaining health: ' + this.health);
+    if(this.health < 1){
+      this.health = 0;
+      this.isAlive = false;
+      cl('He\'s dead, Jim.');
     }
   };
   this.spendMana = function(cost) {
+    cl('spendMana called. Cost: ' + cost);
+    cl(this.name + ' has ' + this.mana + ' mana.');
     var spellWasCast = false;
-    if(mana >= cost){
-      mana -= cost;
+    if(this.mana >= cost){
+      this.mana -= cost;
       spellWasCast = true;
     }
+    cl(this.name + ' cast: ' + spellWasCast + '; remaining mana: ' + this.mana);
     return spellWasCast;
   };
   this.invoke = function(spell, target) {
-    if(!(target instanceof Spellcaster) || !(spell instanceof Spell || spell instanceof DamageSpell)) {
+    var spellResult = false;
+    var params = this.invoke.arguments.length;
+    cl('\'invoke\' called. Parameters passed: ' + params);
+    isSpell = spell instanceof Spell;
+    cl(isSpell);
+    isDamageSpell = spell instanceof DamageSpell;
+    cl(isDamageSpell);
+    isSpellcaster = target instanceof Spellcaster;
+    cl(isSpellcaster);
+    if(isSpell || isDamageSpell) {
+      spellResult = true;
+      this.spendMana(spell.cost);
+    }
+    return spellResult;
+
+    //check how many parameters were passed
+    /*
+    let args = this.invoke.arguments;
+    //can the spell be invoked?
+    cl('\'invoke\' called. parameters: ' + args.length);
+    cl('first param: ' + args[0]);
+    if(args.length === 1){
+      cl('there was only one parameter passed!');
+      cl(Object.getOwnPropertyNames(args[0]));
+      cl(args[0].name);
+      cl('instance of spell: ' + (args[0] instanceof Spell || args[0] instanceof DamageSpell));
+      if(args[0] instanceof Spell || args[0] instanceof DamageSpell) {
+        return true;
+      }
+    }
+    isSpell = spell instanceof Spell;
+    isDamageSpell = spell instanceof DamageSpell;
+    isSpellcaster = target instanceof Spellcaster;
+    cl('Spellcaster: ' + isSpellcaster + '; target: ' + target.name);
+    cl('isSpell: ' + isSpell);
+    cl('isDamageSpell: ' + isDamageSpell);
+    if(isSpellcaster && (isSpell || isDamageSpell)) {
+      cl(this.name + ' will try to cast a spell!');
+      cl('Spell \'' + spell.name + '\' invoked by ' + this.name + '; damage: ' + spell.damage + '; target: ' + target.name);
+      var spellCast = this.spendMana(spell.cost);
+      if(spellCast) {
+        target.inflictDamage(spell.damage);
+      } else {
+        cl('invoke failed! ' + this.name + ' didn\'t have enough mana.');
+        return false;
+      }
+    } else {
       return false;
     }
-  }
+    */
+  };
 
  }
 
@@ -159,3 +217,7 @@
    * @param  {Spellcaster} target         The spell target to be inflicted.
    * @return {boolean}                    Whether the spell was successfully cast.
    */
+
+cl = function(theValue){
+  console.log(theValue);
+};
