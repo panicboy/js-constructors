@@ -127,7 +127,8 @@
     cl(isSpellcaster);
     if(isSpell || isDamageSpell) {
       spellResult = true;
-      this.spendMana(spell.cost);
+      var hasEnoughMana = this.spendMana(spell.cost);
+      spellResult = hasEnoughMana;
     }
     return spellResult;
 
