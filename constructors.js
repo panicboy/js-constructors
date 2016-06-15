@@ -116,21 +116,29 @@
     return spellWasCast;
   };
   this.invoke = function(spell, target) {
-    var spellResult = false;
-    var params = this.invoke.arguments.length;
-    cl('\'invoke\' called. Parameters passed: ' + params);
-    isSpell = spell instanceof Spell;
-    cl(isSpell);
-    isDamageSpell = spell instanceof DamageSpell;
-    cl(isDamageSpell);
-    isSpellcaster = target instanceof Spellcaster;
-    cl(isSpellcaster);
-    if(isSpell || isDamageSpell) {
-      spellResult = true;
-      var hasEnoughMana = this.spendMana(spell.cost);
-      spellResult = hasEnoughMana;
+  //is it a spell?
+  if (spell instanceof Spell || spell instanceof DamageSpell) {
+    //is there enough mana?
+    if ( this.mana >= spell.cost ) {
+      //is it a damage spell?
+      if ( spell instanceof DamageSpell ) {
+        //is the target a spellcaster?
+        if ( target instanceof Spellcaster ) {
+          target.inflictDamage(spell.damage);
+        } else {
+          //not a spellcaster
+          return false;
+        }
+      }
+      //mana or not enough mana
+      return this.spendMana(spell.cost);
     }
-    return spellResult;
+  }
+  //not a spell
+  return false;
+};
+
+
 
     //check how many parameters were passed
     /*
@@ -167,7 +175,6 @@
       return false;
     }
     */
-  };
 
  }
 
