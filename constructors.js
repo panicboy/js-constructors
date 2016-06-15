@@ -29,8 +29,9 @@
    */
 
    Spell.prototype.getDetails = function(){
-    printDetails();
+    return 'name: ' + this.name + '; cost: ' + this.cost + '; description: ' + this.description;
    };
+
 /**
  * A spell that deals damage.
  * We want to keep this code DRY (Don't Repeat Yourself).
@@ -63,7 +64,8 @@
 
   DamageSpell.prototype = Object.create(Spell.prototype, {
     constructor: DamageSpell
-  });
+  }
+  );
 
 /**
  * Now that you've created some spells, let's create
@@ -102,6 +104,11 @@
     }
     return spellWasCast;
   };
+  this.invoke = function(spell, target) {
+    if(!(target instanceof Spellcaster) || !(spell instanceof Spell || spell instanceof DamageSpell)) {
+      return false;
+    }
+  }
 
  }
 
